@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+// JDavis: importing Platform
+import { NavController, Platform } from 'ionic-angular';
 import { ToastController } from 'ionic-angular';
+// JDavis: importing ScreenOrientation
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
 
 @Component({
   selector: 'page-home',
@@ -16,8 +19,19 @@ export class HomePage {
              'Concentrate and ask again.', "Don't count on it.", 'My reply is no.',
              'My sources say no.', 'Outlook not so good.', 'Very doubtful.']
 
-  constructor(public navCtrl: NavController, private toastCtrl: ToastController) {
+  constructor(public navCtrl: NavController,
+              // JDavis delare screenOrientation & platform
+              private screenOrientation: ScreenOrientation,
+              private platform: Platform,
+              private toastCtrl: ToastController) {
 
+  }
+
+  ionViewDidLoad() {
+    // JDavis: if you are on a mobile device, lock the screen.
+    if (this.platform.is('cordova')) {
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
+    }
   }
 
   giveAnswer() {
@@ -27,7 +41,7 @@ export class HomePage {
     var temp = this;
     setTimeout(function(){
       temp.presentToast(answer);
-    }, 2000)
+    }, 1500)
   }
 
   presentToast(answer) {
@@ -41,6 +55,12 @@ export class HomePage {
       this.cssClass = "";
     });
     toast.present();
+  }
+
+  gotoAbout() {
+    this.navCtrl.push('AboutPage', {
+      x: "This is a message from the HomePage"
+    });
   }
 
 }
